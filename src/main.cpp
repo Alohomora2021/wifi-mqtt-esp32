@@ -4,7 +4,7 @@
 #define SSID          "NETGEAR68"
 #define PWD           "excitedtuba713"
 
-#define MQTT_SERVER   "192.168.1.3"
+#define MQTT_SERVER   "192.168.1.3" // could change if the setup is moved
 #define MQTT_PORT     1883
 
 #define LED_PIN       2
@@ -17,6 +17,7 @@ int value = 0;
 
 void callback(char *topic, byte *message, unsigned int length);
 
+// function for establishing wifi connection, do not touch
 void setup_wifi()
 {
   delay(10);
@@ -36,6 +37,7 @@ void setup_wifi()
   Serial.println(WiFi.localIP());
 }
 
+// general setup, add lines if needed
 void setup()
 {
   pinMode(LED_PIN, OUTPUT);
@@ -50,6 +52,7 @@ void setup()
   
 }
 
+// callback function, only used when receiving messages
 void callback(char *topic, byte *message, unsigned int length)
 {
   Serial.print("Message arrived on topic: ");
@@ -65,21 +68,27 @@ void callback(char *topic, byte *message, unsigned int length)
   Serial.println();
 
   // Feel free to add more if statements to control more GPIOs with MQTT
+  // When receiving a message on "esp32/control" a check should be excecuted
 
-  // If a message is received on the topic esp32/output, you check if the message is either "on" or "off".
-  // Changes the output state according to the message
-  if (String(topic) == "esp32/output")
+  // If a message is received on the topic esp32/control, you check if the message is either "start" or "stop" (or "reset").
+  // Changes the state according to the message
+  if (String(topic) == "esp32/control")
   {
-    Serial.print("Changing output to ");
-    if (messageTemp == "on")
+    Serial.print("Changing state to ");
+    if (messageTemp == "start")
     {
-      Serial.println("on");
+      Serial.println("start");
       digitalWrite(LED_PIN, HIGH);
     }
-    else if (messageTemp == "off")
+    else if (messageTemp == "stop")
     {
-      Serial.println("off");
+      Serial.println("stop");
       digitalWrite(LED_PIN, LOW);
+    }
+    else if (messageTemp == "reset")
+    {
+      Serial.println("reset");
+      setup();
     }
   }
 }
@@ -95,8 +104,10 @@ void reconnect()
     if (client.connect("ESP8266Client"))
     {
       Serial.println("connected");
-      // Subscribe
-      client.publish("test/message", "this is a test");
+      // Publish
+      client.publish("esp32/alohomora/control", "this is a test");
+      // ... and resubscribe
+      client.subscribe("esp32/alohomora/control");
     }
     else
     {
