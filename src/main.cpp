@@ -4,7 +4,7 @@
 #define SSID          "NETGEAR68"
 #define PWD           "excitedtuba713"
 
-#define MQTT_SERVER   "192.168.1.2"
+#define MQTT_SERVER   "192.168.1.3"
 #define MQTT_PORT     1883
 
 #define LED_PIN       2
@@ -38,6 +38,8 @@ void setup_wifi()
 
 void setup()
 {
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
 
   Serial.begin(115200);
 
@@ -45,7 +47,7 @@ void setup()
   client.setServer(MQTT_SERVER, MQTT_PORT);
   client.setCallback(callback);
 
-  pinMode(LED_PIN, OUTPUT);
+  
 }
 
 void callback(char *topic, byte *message, unsigned int length)
@@ -84,6 +86,7 @@ void callback(char *topic, byte *message, unsigned int length)
 
 void reconnect()
 {
+  delay(10);
   // Loop until we're reconnected
   while (!client.connected())
   {
@@ -93,7 +96,7 @@ void reconnect()
     {
       Serial.println("connected");
       // Subscribe
-      client.subscribe("esp32/output");
+      client.publish("test/message", "this is a test");
     }
     else
     {
@@ -105,6 +108,7 @@ void reconnect()
     }
   }
 }
+
 void loop()
 {
   if (!client.connected())
@@ -112,6 +116,8 @@ void loop()
     reconnect();
   }
   client.loop();
+
+  delay(500);
 
   long now = millis();
   if (now - lastMsg > 5000)
