@@ -1,8 +1,8 @@
 #include "WiFi.h"
 #include "PubSubClient.h" //pio lib install "knolleary/PubSubClient"
 
-#define SSID          "excitedtuba713"
-#define PWD           "NETGEAR68"
+#define SSID          "NETGEAR68"
+#define PWD           "excitedtuba713"
 
 #define MQTT_SERVER   "192.168.1.2"
 #define MQTT_PORT     1883
