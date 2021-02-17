@@ -1,3 +1,5 @@
+// This file is an example to use for connecting your esp32 to the broker
+
 #include "WiFi.h"
 #include "PubSubClient.h" //pio lib install "knolleary/PubSubClient"
 
@@ -41,7 +43,7 @@ void setup_wifi()
 void setup()
 {
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
+  digitalWrite(LED_PIN, LOW);
 
   Serial.begin(115200);
 
@@ -72,7 +74,7 @@ void callback(char *topic, byte *message, unsigned int length)
 
   // If a message is received on the topic esp32/control, you check if the message is either "start" or "stop" (or "reset").
   // Changes the state according to the message
-  if (String(topic) == "esp32/control")
+  if (String(topic) == "esp32/alohomora/control")
   {
     Serial.print("Changing state to ");
     if (messageTemp == "start")
@@ -93,6 +95,7 @@ void callback(char *topic, byte *message, unsigned int length)
   }
 }
 
+// function to establish MQTT connection
 void reconnect()
 {
   delay(10);
@@ -120,6 +123,7 @@ void reconnect()
   }
 }
 
+// loop function for recurring functionality
 void loop()
 {
   if (!client.connected())
