@@ -6,7 +6,7 @@
 #define SSID          "NETGEAR68"
 #define PWD           "excitedtuba713"
 
-#define MQTT_SERVER   "192.168.1.3" // could change if the setup is moved
+#define MQTT_SERVER   "192.168.1.2" // could change if the setup is moved
 #define MQTT_PORT     1883
 
 #define LED_PIN       2
@@ -54,6 +54,15 @@ void setup()
   
 }
 
+void blink(){
+  while(true){
+    digitalWrite(LED_PIN, HIGH);
+    delay(1000);
+    digitalWrite(LED_PIN, LOW);
+    delay(1000);
+  }
+}
+
 // callback function, only used when receiving messages
 void callback(char *topic, byte *message, unsigned int length)
 {
@@ -91,6 +100,11 @@ void callback(char *topic, byte *message, unsigned int length)
     {
       Serial.println("reset");
       setup();
+    }
+    else if (messageTemp == "blink")
+    {
+      Serial.println("blink");
+      blink();
     }
   }
 }
